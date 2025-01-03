@@ -1,5 +1,15 @@
 import prisma from "../db";
 export const createUpdatePoints = async function (req, res) {
+  const update = await prisma.update.findUnique({
+    where: {
+      id: req.body.productId,
+    },
+  });
+
+  if (!update) {
+    res.status(404).send({ message: "Invalid Update" });
+  }
+
   const updatePoint = await prisma.updatePoints.create({
     data: {
       ...req.body,

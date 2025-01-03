@@ -34,6 +34,12 @@ export const createProduct = async (req, res) => {
 };
 
 export const updateProduct = async (req, res) => {
+  await prisma.product.findUniqueOrThrow({
+    where: {
+      id: req.params.id,
+    },
+  });
+
   const product = await prisma.product.update({
     where: {
       id: req.params.id,
