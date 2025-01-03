@@ -2,15 +2,20 @@ import prisma from "../db";
 import { comparePasswords, createJWT, hashPassword } from "../utils/auth";
 
 export async function createNewUser(req, res, next) {
-  const user = await prisma.user.create({
-    data: {
-      username: req.body.username,
-      password: await hashPassword(req.body.password),
-    },
-  });
+  try {
+    const user = await prisma.user.create({
+      data: {
+        username: req.body.username,
+        password: await hashPassword(req.body.password),
+      },
+    });
 
-  const token = createJWT(user);
-  res.json({ token });
+    const token = createJWT(user);
+    res.json({ token });
+  } catch (error: any) {
+    error.type = "input";
+    next(error);
+  }
 }
 
 export async function signIn(req, res, next) {
@@ -19,6 +24,7 @@ export async function signIn(req, res, next) {
       .status(400)
       .send({ message: "Username or Password is required" });
   }
+
   const user = await prisma.user.findUnique({
     where: { username: req.body.username },
   });

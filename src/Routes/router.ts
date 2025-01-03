@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { protect } from "../utils/auth";
-import { body, oneOf, validationResult } from "express-validator";
+import { body, oneOf, param, query, validationResult } from "express-validator";
 import { validateInput } from "../utils/validator";
 import { validStatus } from "../constants/constant";
 import {
@@ -15,27 +15,27 @@ const router = Router();
 
 //PRODUCTS
 router.get("/products", getProducts);
-router.get("/product/:id", getProduct);
+router.get("/product/:id", param("id").isString(), getProduct);
+router.post("/product", body("name").isString(), createProduct);
 router.put(
   "/product/:id",
-  body("name").optional().isString(),
+  body("name").isString(),
   validateInput,
   updateProduct
 );
-router.post("/product", body("name").isString(), createProduct);
-router.delete("/product/:id", deleteProduct);
+router.delete("/product/:id", param("id").isString(), deleteProduct);
 
 //UPDATES
 router.get("/updates", () => {});
-router.get("/update/:id", () => {});
+router.get("/update/:id", param("id").isString(), () => {});
 router.put(
   "/update/:id",
-  body("title").optional().isString(),
-  body("body").optional().isString(),
+  param("id").isString(),
+  body("title").isString(),
+  body("body").isString(),
   body("status")
     .isIn(validStatus)
-    .withMessage(`valid status must be one of ${validStatus.join(",")}`)
-    .optional(),
+    .withMessage(`valid status must be one of ${validStatus.join(",")}`),
   body("version").optional().isString(),
   validateInput,
   () => {}
@@ -48,15 +48,15 @@ router.post(
   validateInput,
   () => {}
 );
-router.delete("/update/:id", () => {});
+router.delete("/update/:id", param("id").isString(), () => {});
 
 //UPDATE POINTS
 router.get("/updatepoints", () => {});
-router.get("/updatepoint/:id", () => {});
+router.get("/updatepoint/:id", param("id").isString(), () => {});
 router.put(
   "/updatepoint/:id",
-  body("name").optional().isString(),
-  body("description").optional().isString(),
+  body("name").isString(),
+  body("description").isString(),
   validateInput,
   () => {}
 );
@@ -68,6 +68,6 @@ router.post(
   validateInput,
   () => {}
 );
-router.delete("/updatepoint/:id", () => {});
+router.delete("/updatepoint/:id", param("id").isString(), () => {});
 
 export default router;
