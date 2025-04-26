@@ -10,13 +10,14 @@ import {
   getProducts,
   updateProduct,
 } from "../handlers/product";
+import { createUpdate, getAllUpdate } from "../handlers/update";
 
 const router = Router();
 
 //PRODUCTS
 router.get("/products", getProducts);
-router.get("/product/:id", param("id").isString(), getProduct);
-router.post("/product", body("name").isString(), createProduct);
+router.get("/product/:id", param("id").isString(), validateInput, getProduct);
+router.post("/product", body("name").isString(), validateInput, createProduct);
 router.put(
   "/product/:id",
   body("name").isString(),
@@ -26,7 +27,7 @@ router.put(
 router.delete("/product/:id", param("id").isString(), deleteProduct);
 
 //UPDATES
-router.get("/updates", () => {});
+router.get("/updates", getAllUpdate);
 router.get("/update/:id", param("id").isString(), () => {});
 router.put(
   "/update/:id",
@@ -46,7 +47,7 @@ router.post(
   body("body").exists().isString(),
   body("productId").exists().isString(),
   validateInput,
-  () => {}
+  createUpdate
 );
 router.delete("/update/:id", param("id").isString(), () => {});
 
